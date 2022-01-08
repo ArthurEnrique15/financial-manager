@@ -11,4 +11,14 @@ describe('users tests', () => {
         expect(res.body[0]).toHaveProperty('name', 'Arthur Enrique');
       });
   });
+
+  it('should post a user', () => {
+    return request(app).post('/users')
+      .send({ name: 'Arthur Enrique', email: 'arthur@mail.com' })
+      .then((res) => {
+        expect(res.status).toBe(201);
+        expect(res.body.name).toBe('Arthur Enrique');
+        expect(res.body.email).toBe('arthur@mail.com');
+      });
+  });
 });
