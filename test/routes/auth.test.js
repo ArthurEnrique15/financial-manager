@@ -47,4 +47,10 @@ describe('auth tests', () => {
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('Invalid mail or password');
   });
+
+  it('should not access a protected route without a token', async () => {
+    const res = await request(app).get('/users').send();
+
+    expect(res.status).toBe(401);
+  });
 });
