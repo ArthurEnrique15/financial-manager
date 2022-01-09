@@ -1,5 +1,6 @@
 const jwt = require('jwt-simple');
 const bcrypt = require('bcrypt');
+const ValidationError = require('../errors/validation-error');
 
 const secret = 'segredo';
 
@@ -9,7 +10,10 @@ module.exports = (app) => {
 
     app.services.users.findOne({ mail: req.body.mail })
       .then((user) => {
-        if (bcrypt.compareSync(password, user.password)) {
+        // if user doesn't exists or passwords doesn't match, throw validation error
+        if (!user || !bcrypt.compareSync(password, user.password)) {
+          throw new ValidationError('Invalid mail or password');
+        } else {
           const payload = {
             id: user.id,
             name: user.name,

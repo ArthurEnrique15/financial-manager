@@ -19,4 +19,32 @@ describe('auth tests', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('token');
   });
+
+  it('should not auth a user with a wrong password', async () => {
+    const user = await app.services.users.create({
+      name: 'Arthur Enrique',
+      mail: `${Date.now()}@mail.com`,
+      password: 'password',
+    });
+
+    const res = await request(app).post('/auth/signin')
+      .send({
+        mail: user.mail,
+        password: 'wrong_password',
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Invalid mail or password');
+  });
+
+  it('should not auth a user that does not exist', async () => {
+    const res = await request(app).post('/auth/signin')
+      .send({
+        mail: 'non_existing_mail@example.com',
+        password: 'password',
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Invalid mail or password');
+  });
 });
