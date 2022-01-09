@@ -1,8 +1,10 @@
+const bcrypt = require('bcrypt');
 const ValidationError = require('../errors/validation-error');
 
 module.exports = (app) => {
-  const findAll = (filter = {}) => {
-    return app.db('users').where(filter).select();
+  const getPasswordHash = (password) => {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(password, salt);
   };
 
   const create = async (user) => {
@@ -18,16 +20,34 @@ module.exports = (app) => {
       throw new ValidationError('Password is required');
     }
 
-    const emailAlreadyExists = await findAll({ mail: user.mail });
+    const emailAlreadyExists = await findOne({ mail: user.mail });
 
-    if (emailAlreadyExists && emailAlreadyExists.length > 0) {
+    if (emailAlreadyExists) {
       throw new ValidationError('Email already exists');
     }
 
-    const createdUser = await app.db('users').insert(user, '*');
+    const userToBeCreated = {
+      name: user.name,
+      mail: user.mail,
+      password: getPasswordHash(user.password),
+    };
+
+    const createdUser = await app.db('users')
+      .insert(userToBeCreated, ['id', 'name', 'mail']);
 
     return createdUser[0];
   };
 
-  return { findAll, create };
+  const findAll = () => {
+    return app.db('users')
+      .select(['id', 'name', 'mail']);
+  };
+
+  const findOne = (filter = {}) => {
+    return app.db('users')
+      .where(filter)
+      .first();
+  };
+
+  return { findAll, create, findOne };
 };

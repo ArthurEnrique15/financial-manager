@@ -24,7 +24,25 @@ describe('users tests', () => {
         expect(res.status).toBe(201);
         expect(res.body.name).toBe('Arthur Enrique');
         expect(res.body.mail).toBe(mail);
+        expect(res.body).not.toHaveProperty('password');
       });
+  });
+
+  it('should store an encrypted password', async () => {
+    const res = await request(app).post('/users')
+      .send({
+        name: 'Arthur Enrique',
+        mail: `${Date.now()}@mail.com`,
+        password: 'password',
+      });
+
+    expect(res.status).toBe(201);
+
+    const { id } = res.body;
+
+    const userDB = await app.services.users.findOne({ id });
+
+    expect(userDB.password).not.toBe('password');
   });
 
   // using promise.then
