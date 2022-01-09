@@ -1,5 +1,12 @@
 module.exports = (app) => {
   const create = async (account) => {
+    if (!account.name) {
+      return {
+        status: 400,
+        error: 'Name is required',
+      };
+    }
+
     const createdAccount = await app.db('accounts').insert(account, '*');
 
     return {

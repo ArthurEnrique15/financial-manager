@@ -28,6 +28,20 @@ describe('accounts tests', () => {
     expect(result.body.data.name).toBe('test account');
   });
 
+  it('should not post a nameless account', async () => {
+    const result = await request(app).post(mainRoute)
+      .send({
+        user_id: user.id,
+      });
+
+    expect(result.status).toBe(400);
+    expect(result.body.error).toBe('Name is required');
+  });
+
+  // TODO create test 'should not post a duplicate account for the same user'
+  it.skip('should not post a duplicate account for the same user', () => {
+  });
+
   it('should list all accounts', async () => {
     await app.db('accounts')
       .insert({
@@ -39,6 +53,10 @@ describe('accounts tests', () => {
 
     expect(result.status).toBe(200);
     expect(result.body.data.length).toBeGreaterThan(0);
+  });
+
+  // TODO create test 'should list only user accounts'
+  it.skip('should list only user accounts', () => {
   });
 
   it('should get an account by id', async () => {
@@ -56,6 +74,10 @@ describe('accounts tests', () => {
     expect(result.body.data.user_id).toBe(accounts[0].user_id);
   });
 
+  // TODO create test 'should not get an account from other user'
+  it.skip('should not get an account from other user', () => {
+  });
+
   it('should update an account', async () => {
     const accounts = await app.db('accounts')
       .insert({
@@ -71,6 +93,10 @@ describe('accounts tests', () => {
     expect(result.body.data.name).toBe('new_account_name');
   });
 
+  // TODO create test 'should not update an account from other user'
+  it.skip('should not update an account from other user', () => {
+  });
+
   it('should delete an account', async () => {
     const accounts = await app.db('accounts')
       .insert({
@@ -81,5 +107,9 @@ describe('accounts tests', () => {
     const result = await request(app).delete(`${mainRoute}/${accounts[0].id}`).send();
 
     expect(result.status).toBe(204);
+  });
+
+  // TODO create test 'should not delete an account from other user'
+  it.skip('should not delete an account from other user', () => {
   });
 });
