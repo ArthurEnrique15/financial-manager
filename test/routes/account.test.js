@@ -27,4 +27,17 @@ describe('accounts tests', () => {
     expect(result.status).toBe(201);
     expect(result.body.data.name).toBe('test account');
   });
+
+  it('should list all accounts', async () => {
+    await app.db('accounts')
+      .insert({
+        name: 'account list',
+        user_id: user.id,
+      });
+
+    const result = await request(app).get(mainRoute).send();
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.length).toBeGreaterThan(0);
+  });
 });

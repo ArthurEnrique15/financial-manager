@@ -1,7 +1,7 @@
 module.exports = (app) => {
   const findAll = (req, res) => {
     app.services.users.findAll()
-      .then((users) => res.status(200).json(users));
+      .then((users) => res.status(200).json({ data: users }));
   };
 
   const create = async (req, res) => {

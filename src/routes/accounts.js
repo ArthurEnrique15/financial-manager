@@ -4,5 +4,10 @@ module.exports = (app) => {
     return res.status(status).json({ data, error });
   };
 
-  return { create };
+  const findAll = (req, res) => {
+    app.services.accounts.findAll()
+      .then((accounts) => res.status(200).json({ data: accounts }));
+  };
+
+  return { create, findAll };
 };

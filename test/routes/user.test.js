@@ -9,7 +9,7 @@ describe('users tests', () => {
     return request(app).get('/users')
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.body.length).toBeGreaterThan(0);
+        expect(res.body.data.length).toBeGreaterThan(0);
       });
   });
 
