@@ -37,4 +37,15 @@ describe('users tests', () => {
         expect(res.body.error).toBe('Name is required');
       });
   });
+
+  it('should not post a user without a mail', async () => {
+    const result = await request(app).post('/users')
+      .send({
+        name: 'Arthur Enrique',
+        password: 'password',
+      });
+
+    expect(result.status).toBe(400);
+    expect(result.body.error).toBe('Email is required');
+  });
 });

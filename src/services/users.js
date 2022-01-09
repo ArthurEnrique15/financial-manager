@@ -11,6 +11,13 @@ module.exports = (app) => {
       };
     }
 
+    if (!user.mail) {
+      return {
+        status: 400,
+        error: 'Email is required',
+      };
+    }
+
     const createdUser = await app.db('users').insert(user, '*');
 
     return {
