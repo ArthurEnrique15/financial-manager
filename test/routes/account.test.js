@@ -1,4 +1,5 @@
 const request = require('supertest');
+const jwt = require('jwt-simple');
 const app = require('../../src/app');
 
 const mainRoute = '/accounts';
@@ -13,6 +14,8 @@ describe('accounts tests', () => {
       mail: `${Date.now()}@mail.com`,
       password: 'password',
     });
+
+    user.token = jwt.encode(user, 'segredo');
   });
 
   it('should post an account', async () => {
@@ -20,7 +23,8 @@ describe('accounts tests', () => {
       .send({
         name: 'test account',
         user_id: user.id,
-      });
+      })
+      .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(201);
     expect(result.body.name).toBe('test account');
@@ -30,7 +34,8 @@ describe('accounts tests', () => {
     const result = await request(app).post(mainRoute)
       .send({
         user_id: user.id,
-      });
+      })
+      .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(400);
     expect(result.body.error).toBe('Name is required');
@@ -47,7 +52,10 @@ describe('accounts tests', () => {
         user_id: user.id,
       });
 
-    const result = await request(app).get(mainRoute).send();
+    const result = await request(app)
+      .get(mainRoute)
+      .send()
+      .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(200);
     expect(result.body.length).toBeGreaterThan(0);
@@ -64,7 +72,10 @@ describe('accounts tests', () => {
         user_id: user.id,
       }, '*');
 
-    const result = await request(app).get(`${mainRoute}/${accounts[0].id}`).send();
+    const result = await request(app)
+      .get(`${mainRoute}/${accounts[0].id}`)
+      .send()
+      .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(200);
     expect(result.body.id).toBe(accounts[0].id);
@@ -83,9 +94,12 @@ describe('accounts tests', () => {
         user_id: user.id,
       }, '*');
 
-    const result = await request(app).put(`${mainRoute}/${accounts[0].id}`).send({
-      name: 'new_account_name',
-    });
+    const result = await request(app)
+      .put(`${mainRoute}/${accounts[0].id}`)
+      .send({
+        name: 'new_account_name',
+      })
+      .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(200);
     expect(result.body.name).toBe('new_account_name');
@@ -102,7 +116,10 @@ describe('accounts tests', () => {
         user_id: user.id,
       }, '*');
 
-    const result = await request(app).delete(`${mainRoute}/${accounts[0].id}`).send();
+    const result = await request(app)
+      .delete(`${mainRoute}/${accounts[0].id}`)
+      .send()
+      .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(204);
   });
