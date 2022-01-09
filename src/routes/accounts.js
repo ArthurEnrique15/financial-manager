@@ -1,31 +1,32 @@
 module.exports = (app) => {
-  const create = async (req, res) => {
-    try {
-      const data = await app.services.accounts.create(req.body, '*');
-      return res.status(201).json(data);
-    } catch (err) {
-      return res.status(400).json({ error: err.message });
-    }
+  const create = async (req, res, next) => {
+    app.services.accounts.create(req.body, '*')
+      .then((data) => res.status(201).json(data))
+      .catch((err) => next(err));
   };
 
-  const findAll = (req, res) => {
+  const findAll = async (req, res, next) => {
     app.services.accounts.findAll()
-      .then((accounts) => res.status(200).json(accounts));
+      .then((data) => res.status(200).json(data))
+      .catch((err) => next(err));
   };
 
-  const findById = (req, res) => {
+  const findById = async (req, res, next) => {
     app.services.accounts.findById({ id: req.params.id })
-      .then((account) => res.status(200).json(account[0]));
+      .then((data) => res.status(200).json(data[0]))
+      .catch((err) => next(err));
   };
 
-  const update = (req, res) => {
+  const update = async (req, res, next) => {
     app.services.accounts.update(req.params.id, req.body)
-      .then((account) => res.status(200).json(account[0]));
+      .then((data) => res.status(200).json(data[0]))
+      .catch((err) => next(err));
   };
 
-  const remove = (req, res) => {
+  const remove = async (req, res, next) => {
     app.services.accounts.remove(req.params.id)
-      .then(() => res.status(204).send());
+      .then(() => res.status(204).send())
+      .catch((err) => next(err));
   };
 
   return {

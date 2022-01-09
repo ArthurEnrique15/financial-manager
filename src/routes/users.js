@@ -1,16 +1,13 @@
 module.exports = (app) => {
   const findAll = (req, res) => {
     app.services.users.findAll()
-      .then((users) => res.status(200).json({ data: users }));
+      .then((users) => res.status(200).json(users));
   };
 
-  const create = async (req, res) => {
-    try {
-      const data = await app.services.users.create(req.body, '*');
-      return res.status(201).json(data);
-    } catch (err) {
-      return res.status(400).json({ error: err.message });
-    }
+  const create = async (req, res, next) => {
+    app.services.users.create(req.body, '*')
+      .then((data) => res.status(201).json(data))
+      .catch((err) => next(err));
   };
 
   return { findAll, create };
