@@ -5,8 +5,8 @@ module.exports = (app) => {
   };
 
   const save = async (req, res) => {
-    const result = await app.services.users.save(req.body, '*');
-    res.status(201).json(result[0]);
+    const { status, data, error } = await app.services.users.save(req.body, '*');
+    res.status(status).json({ data, error });
   };
 
   return { findAll, save };

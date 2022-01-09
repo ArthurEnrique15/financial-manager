@@ -21,8 +21,20 @@ describe('users tests', () => {
       })
       .then((res) => {
         expect(res.status).toBe(201);
-        expect(res.body.name).toBe('Arthur Enrique');
-        expect(res.body.mail).toBe(mail);
+        expect(res.body.data.name).toBe('Arthur Enrique');
+        expect(res.body.data.mail).toBe(mail);
+      });
+  });
+
+  it('should not post a nameless user', () => {
+    return request(app).post('/users')
+      .send({
+        mail: 'example@example.com',
+        password: 'password',
+      })
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Name is required');
       });
   });
 });

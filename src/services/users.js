@@ -4,9 +4,19 @@ module.exports = (app) => {
   };
 
   const save = async (user) => {
+    if (!user.name) {
+      return {
+        status: 400,
+        error: 'Name is required',
+      };
+    }
+
     const createdUser = await app.db('users').insert(user, '*');
 
-    return createdUser;
+    return {
+      status: 201,
+      data: createdUser[0],
+    };
   };
 
   return { findAll, save };
