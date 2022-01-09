@@ -40,4 +40,19 @@ describe('accounts tests', () => {
     expect(result.status).toBe(200);
     expect(result.body.data.length).toBeGreaterThan(0);
   });
+
+  it('should get an account by id', async () => {
+    const accounts = await app.db('accounts')
+      .insert({
+        name: 'account list',
+        user_id: user.id,
+      }, '*');
+
+    const result = await request(app).get(`${mainRoute}/${accounts[0].id}`).send();
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.id).toBe(accounts[0].id);
+    expect(result.body.data.name).toBe(accounts[0].name);
+    expect(result.body.data.user_id).toBe(accounts[0].user_id);
+  });
 });

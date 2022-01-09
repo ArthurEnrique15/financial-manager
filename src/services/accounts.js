@@ -12,5 +12,9 @@ module.exports = (app) => {
     return app.db('accounts').where(filter).select();
   };
 
-  return { create, findAll };
+  const findById = (id) => {
+    return app.db('accounts').where(id).select();
+  };
+
+  return { create, findAll, findById };
 };

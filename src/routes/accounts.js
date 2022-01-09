@@ -9,5 +9,10 @@ module.exports = (app) => {
       .then((accounts) => res.status(200).json({ data: accounts }));
   };
 
-  return { create, findAll };
+  const findById = (req, res) => {
+    app.services.accounts.findById({ id: req.params.id })
+      .then((account) => res.status(200).json({ data: account[0] }));
+  };
+
+  return { create, findAll, findById };
 };
