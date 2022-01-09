@@ -3,7 +3,7 @@ module.exports = (app) => {
     return app.db('users').where(filter).select();
   };
 
-  const save = async (user) => {
+  const create = async (user) => {
     if (!user.name) {
       return {
         status: 400,
@@ -42,5 +42,5 @@ module.exports = (app) => {
     };
   };
 
-  return { findAll, save };
+  return { findAll, create };
 };
