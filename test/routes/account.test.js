@@ -8,13 +8,11 @@ let user;
 describe('accounts tests', () => {
   // creates an user before the accounts tests
   beforeAll(async () => {
-    const result = await app.services.users.create({
+    user = await app.services.users.create({
       name: 'Arthur Enrique',
       mail: `${Date.now()}@mail.com`,
       password: 'password',
     });
-
-    user = result.data;
   });
 
   it('should post an account', async () => {
@@ -25,7 +23,7 @@ describe('accounts tests', () => {
       });
 
     expect(result.status).toBe(201);
-    expect(result.body.data.name).toBe('test account');
+    expect(result.body.name).toBe('test account');
   });
 
   it('should not post a nameless account', async () => {
@@ -52,7 +50,7 @@ describe('accounts tests', () => {
     const result = await request(app).get(mainRoute).send();
 
     expect(result.status).toBe(200);
-    expect(result.body.data.length).toBeGreaterThan(0);
+    expect(result.body.length).toBeGreaterThan(0);
   });
 
   // TODO create test 'should list only user accounts'
@@ -69,9 +67,9 @@ describe('accounts tests', () => {
     const result = await request(app).get(`${mainRoute}/${accounts[0].id}`).send();
 
     expect(result.status).toBe(200);
-    expect(result.body.data.id).toBe(accounts[0].id);
-    expect(result.body.data.name).toBe(accounts[0].name);
-    expect(result.body.data.user_id).toBe(accounts[0].user_id);
+    expect(result.body.id).toBe(accounts[0].id);
+    expect(result.body.name).toBe(accounts[0].name);
+    expect(result.body.user_id).toBe(accounts[0].user_id);
   });
 
   // TODO create test 'should not get an account from other user'
@@ -90,7 +88,7 @@ describe('accounts tests', () => {
     });
 
     expect(result.status).toBe(200);
-    expect(result.body.data.name).toBe('new_account_name');
+    expect(result.body.name).toBe('new_account_name');
   });
 
   // TODO create test 'should not update an account from other user'

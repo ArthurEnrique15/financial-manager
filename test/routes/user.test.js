@@ -22,8 +22,8 @@ describe('users tests', () => {
       })
       .then((res) => {
         expect(res.status).toBe(201);
-        expect(res.body.data.name).toBe('Arthur Enrique');
-        expect(res.body.data.mail).toBe(mail);
+        expect(res.body.name).toBe('Arthur Enrique');
+        expect(res.body.mail).toBe(mail);
       });
   });
 

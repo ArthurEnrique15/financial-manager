@@ -5,8 +5,12 @@ module.exports = (app) => {
   };
 
   const create = async (req, res) => {
-    const { status, data, error } = await app.services.users.create(req.body, '*');
-    return res.status(status).json({ data, error });
+    try {
+      const data = await app.services.users.create(req.body, '*');
+      return res.status(201).json(data);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
   };
 
   return { findAll, create };

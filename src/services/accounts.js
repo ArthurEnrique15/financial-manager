@@ -1,18 +1,14 @@
+const ValidationError = require('../errors/validation-error');
+
 module.exports = (app) => {
   const create = async (account) => {
     if (!account.name) {
-      return {
-        status: 400,
-        error: 'Name is required',
-      };
+      throw new ValidationError('Name is required');
     }
 
     const createdAccount = await app.db('accounts').insert(account, '*');
 
-    return {
-      status: 201,
-      data: createdAccount[0],
-    };
+    return createdAccount[0];
   };
 
   const findAll = (filter = {}) => {
