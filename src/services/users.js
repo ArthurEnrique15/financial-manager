@@ -18,6 +18,13 @@ module.exports = (app) => {
       };
     }
 
+    if (!user.password) {
+      return {
+        status: 400,
+        error: 'Password is required',
+      };
+    }
+
     const createdUser = await app.db('users').insert(user, '*');
 
     return {

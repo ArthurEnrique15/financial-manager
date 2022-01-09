@@ -26,6 +26,7 @@ describe('users tests', () => {
       });
   });
 
+  // using promise.then
   it('should not post a nameless user', () => {
     return request(app).post('/users')
       .send({
@@ -38,6 +39,7 @@ describe('users tests', () => {
       });
   });
 
+  // using async/await
   it('should not post a user without a mail', async () => {
     const result = await request(app).post('/users')
       .send({
@@ -47,5 +49,18 @@ describe('users tests', () => {
 
     expect(result.status).toBe(400);
     expect(result.body.error).toBe('Email is required');
+  });
+
+  it('should not post a user without a password', async () => {
+    const mail = `${Date.now()}@mail.com`;
+    return request(app).post('/users')
+      .send({
+        name: 'Arthur Enrique',
+        mail,
+      })
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Password is required');
+      });
   });
 });
