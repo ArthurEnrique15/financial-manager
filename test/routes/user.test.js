@@ -4,6 +4,8 @@ const app = require('../../src/app');
 
 const mail = `${Date.now()}@mail.com`;
 
+const mainRoute = '/v1/users';
+
 let user;
 
 describe('users tests', () => {
@@ -19,7 +21,7 @@ describe('users tests', () => {
   });
 
   it('should list all users', () => {
-    return request(app).get('/users')
+    return request(app).get(mainRoute)
       .set('authorization', `bearer ${user.token}`)
       .then((res) => {
         expect(res.status).toBe(200);
@@ -28,7 +30,7 @@ describe('users tests', () => {
   });
 
   it('should post a user', () => {
-    return request(app).post('/users')
+    return request(app).post(mainRoute)
       .send({
         name: 'Arthur Enrique',
         mail,
@@ -44,7 +46,7 @@ describe('users tests', () => {
   });
 
   it('should store an encrypted password', async () => {
-    const res = await request(app).post('/users')
+    const res = await request(app).post(mainRoute)
       .send({
         name: 'Arthur Enrique',
         mail: `${Date.now()}@mail.com`,
@@ -63,7 +65,7 @@ describe('users tests', () => {
 
   // using promise.then
   it('should not post a nameless user', () => {
-    return request(app).post('/users')
+    return request(app).post(mainRoute)
       .send({
         mail: 'example@example.com',
         password: 'password',
@@ -77,7 +79,7 @@ describe('users tests', () => {
 
   // using async/await
   it('should not post a user without a mail', async () => {
-    const result = await request(app).post('/users')
+    const result = await request(app).post(mainRoute)
       .send({
         name: 'Arthur Enrique',
         password: 'password',
@@ -89,7 +91,7 @@ describe('users tests', () => {
   });
 
   it('should not post a user without a password', () => {
-    return request(app).post('/users')
+    return request(app).post(mainRoute)
       .send({
         name: 'Arthur Enrique',
         mail,
@@ -102,7 +104,7 @@ describe('users tests', () => {
   });
 
   it('should not post a user with an existing email', () => {
-    return request(app).post('/users')
+    return request(app).post(mainRoute)
       .send({
         name: 'Arthur Enrique',
         mail,

@@ -63,7 +63,7 @@ describe('auth tests', () => {
   });
 
   it('should not access a protected route without a token', async () => {
-    const res = await request(app).get('/users').send();
+    const res = await request(app).get('/v1/users').send();
 
     expect(res.status).toBe(401);
   });

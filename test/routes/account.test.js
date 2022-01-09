@@ -2,7 +2,7 @@ const request = require('supertest');
 const jwt = require('jwt-simple');
 const app = require('../../src/app');
 
-const mainRoute = '/accounts';
+const mainRoute = '/v1/accounts';
 
 let user;
 
