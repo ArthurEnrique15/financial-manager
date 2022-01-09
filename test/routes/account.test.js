@@ -70,4 +70,16 @@ describe('accounts tests', () => {
     expect(result.status).toBe(200);
     expect(result.body.data.name).toBe('new_account_name');
   });
+
+  it('should delete an account', async () => {
+    const accounts = await app.db('accounts')
+      .insert({
+        name: 'account',
+        user_id: user.id,
+      }, '*');
+
+    const result = await request(app).delete(`${mainRoute}/${accounts[0].id}`).send();
+
+    expect(result.status).toBe(204);
+  });
 });
