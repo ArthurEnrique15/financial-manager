@@ -5,10 +5,11 @@ const app = require('../../src/app');
 const mainRoute = '/v1/accounts';
 
 let user;
+let user2;
 
 describe('accounts tests', () => {
   // creates an user before the accounts tests
-  beforeAll(async () => {
+  beforeEach(async () => {
     user = await app.services.users.create({
       name: 'Arthur Enrique',
       mail: `${Date.now()}@mail.com`,
@@ -16,14 +17,17 @@ describe('accounts tests', () => {
     });
 
     user.token = jwt.encode(user, 'segredo');
+
+    user2 = await app.services.users.create({
+      name: 'Arthur Enrique',
+      mail: `${Date.now()}@mail.com`,
+      password: 'password',
+    });
   });
 
   it('should post an account', async () => {
     const result = await request(app).post(mainRoute)
-      .send({
-        name: 'test account',
-        user_id: user.id,
-      })
+      .send({ name: 'test account' })
       .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(201);
@@ -32,9 +36,7 @@ describe('accounts tests', () => {
 
   it('should not post a nameless account', async () => {
     const result = await request(app).post(mainRoute)
-      .send({
-        user_id: user.id,
-      })
+      .send()
       .set('authorization', `bearer ${user.token}`);
 
     expect(result.status).toBe(400);
@@ -45,24 +47,28 @@ describe('accounts tests', () => {
   it.skip('should not post a duplicate account for the same user', () => {
   });
 
-  it('should list all accounts', async () => {
+  // TODO create test 'should list only user accounts'
+  it('should list only user accounts', async () => {
     await app.db('accounts')
-      .insert({
-        name: 'account list',
-        user_id: user.id,
-      });
+      .insert([
+        {
+          name: 'user1 account',
+          user_id: user.id,
+        },
+        {
+          name: 'user2 account',
+          user_id: user2.id,
+        },
+      ]);
 
-    const result = await request(app)
+    const res = await request(app)
       .get(mainRoute)
       .send()
       .set('authorization', `bearer ${user.token}`);
 
-    expect(result.status).toBe(200);
-    expect(result.body.length).toBeGreaterThan(0);
-  });
-
-  // TODO create test 'should list only user accounts'
-  it.skip('should list only user accounts', () => {
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(1);
+    expect(res.body[0].name).toBe('user1 account');
   });
 
   it('should get an account by id', async () => {

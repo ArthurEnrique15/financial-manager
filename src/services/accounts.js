@@ -11,12 +11,16 @@ module.exports = (app) => {
     return createdAccount[0];
   };
 
-  const findAll = (filter = {}) => {
-    return app.db('accounts').where(filter).select();
+  const findByUser = (userId) => {
+    return app.db('accounts')
+      .where({ user_id: userId })
+      .select();
   };
 
   const findById = (id) => {
-    return app.db('accounts').where(id).select();
+    return app.db('accounts')
+      .where(id)
+      .first();
   };
 
   const update = (id, account) => {
@@ -33,7 +37,7 @@ module.exports = (app) => {
 
   return {
     create,
-    findAll,
+    findByUser,
     findById,
     update,
     remove,
