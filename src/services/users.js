@@ -1,6 +1,6 @@
 module.exports = (app) => {
-  const findAll = () => {
-    return app.db('users').select();
+  const findAll = (filter = {}) => {
+    return app.db('users').where(filter).select();
   };
 
   const save = async (user) => {
@@ -22,6 +22,15 @@ module.exports = (app) => {
       return {
         status: 400,
         error: 'Password is required',
+      };
+    }
+
+    const emailAlreadyExists = await findAll({ mail: user.mail });
+
+    if (emailAlreadyExists && emailAlreadyExists.length > 0) {
+      return {
+        status: 400,
+        error: 'Email already exists',
       };
     }
 

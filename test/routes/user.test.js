@@ -2,6 +2,8 @@ const request = require('supertest');
 
 const app = require('../../src/app');
 
+const mail = `${Date.now()}@mail.com`;
+
 describe('users tests', () => {
   it('should list all users', () => {
     return request(app).get('/users')
@@ -12,7 +14,6 @@ describe('users tests', () => {
   });
 
   it('should post a user', () => {
-    const mail = `${Date.now()}@mail.com`;
     return request(app).post('/users')
       .send({
         name: 'Arthur Enrique',
@@ -51,8 +52,7 @@ describe('users tests', () => {
     expect(result.body.error).toBe('Email is required');
   });
 
-  it('should not post a user without a password', async () => {
-    const mail = `${Date.now()}@mail.com`;
+  it('should not post a user without a password', () => {
     return request(app).post('/users')
       .send({
         name: 'Arthur Enrique',
@@ -61,6 +61,19 @@ describe('users tests', () => {
       .then((res) => {
         expect(res.status).toBe(400);
         expect(res.body.error).toBe('Password is required');
+      });
+  });
+
+  it('should not post a user with an existing email', () => {
+    return request(app).post('/users')
+      .send({
+        name: 'Arthur Enrique',
+        mail,
+        password: 'password',
+      })
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Email already exists');
       });
   });
 });
