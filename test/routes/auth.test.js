@@ -3,6 +3,20 @@ const request = require('supertest');
 const app = require('../../src/app');
 
 describe('auth tests', () => {
+  it('should create a user via signup', async () => {
+    const res = await request(app).post('/auth/signup')
+      .send({
+        name: 'Arthur Enrique',
+        mail: `${Date.now()}@mail.com`,
+        password: 'password',
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.name).toBe('Arthur Enrique');
+    expect(res.body).toHaveProperty('mail');
+    expect(res.body).not.toHaveProperty('password');
+  });
+
   it('should receive a token when logging in', async () => {
     const user = await app.services.users.create({
       name: 'Arthur Enrique',
