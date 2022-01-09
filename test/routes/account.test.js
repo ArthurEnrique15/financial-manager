@@ -44,7 +44,7 @@ describe('accounts tests', () => {
   it('should get an account by id', async () => {
     const accounts = await app.db('accounts')
       .insert({
-        name: 'account list',
+        name: 'account',
         user_id: user.id,
       }, '*');
 
@@ -54,5 +54,20 @@ describe('accounts tests', () => {
     expect(result.body.data.id).toBe(accounts[0].id);
     expect(result.body.data.name).toBe(accounts[0].name);
     expect(result.body.data.user_id).toBe(accounts[0].user_id);
+  });
+
+  it('should update an account', async () => {
+    const accounts = await app.db('accounts')
+      .insert({
+        name: 'account',
+        user_id: user.id,
+      }, '*');
+
+    const result = await request(app).put(`${mainRoute}/${accounts[0].id}`).send({
+      name: 'new_account_name',
+    });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.name).toBe('new_account_name');
   });
 });

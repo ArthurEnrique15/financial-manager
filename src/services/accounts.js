@@ -16,5 +16,16 @@ module.exports = (app) => {
     return app.db('accounts').where(id).select();
   };
 
-  return { create, findAll, findById };
+  const update = (id, account) => {
+    return app.db('accounts')
+      .where({ id })
+      .update(account, '*');
+  };
+
+  return {
+    create,
+    findAll,
+    findById,
+    update,
+  };
 };

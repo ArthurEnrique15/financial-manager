@@ -14,5 +14,15 @@ module.exports = (app) => {
       .then((account) => res.status(200).json({ data: account[0] }));
   };
 
-  return { create, findAll, findById };
+  const update = (req, res) => {
+    app.services.accounts.update(req.params.id, req.body)
+      .then((account) => res.status(200).json({ data: account[0] }));
+  };
+
+  return {
+    create,
+    findAll,
+    findById,
+    update,
+  };
 };
