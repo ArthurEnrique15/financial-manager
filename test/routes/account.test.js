@@ -103,8 +103,20 @@ describe('accounts tests', () => {
     expect(result.body.user_id).toBe(accounts[0].user_id);
   });
 
-  // TODO create test 'should not get an account from other user'
-  it.skip('should not get an account from other user', () => {
+  it('should not get an account from other user', async () => {
+    const account = await app.db('accounts')
+      .insert({
+        name: 'account',
+        user_id: user2.id,
+      }, '*');
+
+    const res = await request(app)
+      .get(`${mainRoute}/${account[0].id}`)
+      .send()
+      .set('authorization', `bearer ${user.token}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Resource does not belong to the authenticated user');
   });
 
   it('should update an account', async () => {
