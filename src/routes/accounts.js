@@ -1,7 +1,21 @@
 const express = require('express');
 
+const UnauthorizedResourceError = require('../errors/unauthorized-resource-error');
+
 module.exports = (app) => {
   const router = express.Router();
+
+  router.param('id', async (req, res, next) => {
+    app.services.accounts.find({ id: req.params.id })
+      .then((account) => {
+        if (account.user_id !== req.user.id) {
+          throw new UnauthorizedResourceError();
+        } else {
+          next();
+        }
+      })
+      .catch((err) => next(err));
+  });
 
   router.post('', async (req, res, next) => {
     app.services.accounts.create({
@@ -20,12 +34,7 @@ module.exports = (app) => {
 
   router.get('/:id', async (req, res, next) => {
     app.services.accounts.findById({ id: req.params.id })
-      .then((data) => {
-        if (data.user_id !== req.user.id) {
-          return res.status(403).json({ error: 'Resource does not belong to the authenticated user' });
-        }
-        return res.status(200).json(data);
-      })
+      .then((data) => res.status(200).json(data))
       .catch((err) => next(err));
   });
 

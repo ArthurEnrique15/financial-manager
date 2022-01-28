@@ -54,6 +54,7 @@ module.exports = (app) => {
     create,
     findByUser,
     findById,
+    find,
     update,
     remove,
   };

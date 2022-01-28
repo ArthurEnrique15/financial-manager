@@ -23,8 +23,10 @@ app.use((err, req, res, next) => {
 
   if (name === 'ValidationError') {
     res.status(400).json({ error: message });
+  } else if (name === 'UnauthorizedResourceError') {
+    res.status(403).json({ error: message });
   } else {
-    res.status(400).json({ name, message, stack });
+    res.status(500).json({ name, message, stack });
   }
   next(err);
 });

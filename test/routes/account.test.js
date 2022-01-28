@@ -137,8 +137,22 @@ describe('accounts tests', () => {
     expect(result.body.name).toBe('new_account_name');
   });
 
-  // TODO create test 'should not update an account from other user'
-  it.skip('should not update an account from other user', () => {
+  it('should not update an account from other user', async () => {
+    const account = await app.db('accounts')
+      .insert({
+        name: 'account',
+        user_id: user2.id,
+      }, '*');
+
+    const res = await request(app)
+      .put(`${mainRoute}/${account[0].id}`)
+      .send({
+        name: 'new_account_name',
+      })
+      .set('authorization', `bearer ${user.token}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Resource does not belong to the authenticated user');
   });
 
   it('should delete an account', async () => {
@@ -156,7 +170,19 @@ describe('accounts tests', () => {
     expect(result.status).toBe(204);
   });
 
-  // TODO create test 'should not delete an account from other user'
-  it.skip('should not delete an account from other user', () => {
+  it('should not delete an account from other user', async () => {
+    const account = await app.db('accounts')
+      .insert({
+        name: 'account',
+        user_id: user2.id,
+      }, '*');
+
+    const res = await request(app)
+      .delete(`${mainRoute}/${account[0].id}`)
+      .send()
+      .set('authorization', `bearer ${user.token}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Resource does not belong to the authenticated user');
   });
 });
