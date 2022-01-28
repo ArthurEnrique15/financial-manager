@@ -43,11 +43,25 @@ describe('accounts tests', () => {
     expect(result.body.error).toBe('Name is required');
   });
 
-  // TODO create test 'should not post a duplicate account for the same user'
-  it.skip('should not post a duplicate account for the same user', () => {
+  it('should not post a duplicate account for the same user', async () => {
+    await app.db('accounts')
+      .insert({
+        name: 'user account',
+        user_id: user.id,
+      });
+
+    const res = await request(app)
+      .post(mainRoute)
+      .send({
+        name: 'user account',
+        user_id: user.id,
+      })
+      .set('authorization', `bearer ${user.token}`);
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Account already exists');
   });
 
-  // TODO create test 'should list only user accounts'
   it('should list only user accounts', async () => {
     await app.db('accounts')
       .insert([
